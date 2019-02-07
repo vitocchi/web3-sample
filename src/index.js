@@ -27,6 +27,7 @@ app.get('/block_num', async (req, res) => {
 
 //get transactions
 app.get('/:accountId/transactions', async (req, res) => {
+    const accountId = web3.utils.toChecksumAddress(req.params.accountId)
     const blockNum = await web3.eth.getBlockNumber()
     var transactions = {
         'in': [],
@@ -37,16 +38,16 @@ app.get('/:accountId/transactions', async (req, res) => {
         const block_transactions = block.transactions
         block_transactions.forEach(async (transaction_id) => {
             const transaction = await web3.eth.getTransaction(transaction_id)
-            if (transaction.to === req.params.accountId) {
-                transactions.in.push(transaction_id)
+            if (transaction.to === accountId) {
+                transactions.in.push(transaction)
             }
-            if (transaction.from === req.params.accountId) {
-                transactions.out.push(transaction_id)
+            if (transaction.from === accountId) {
+                transactions.out.push(transaction)
             }
         })
     }
     res.json({
-        count: web3.eth.getTransactionCount("0xe87c517217e4c642902bd6b42ec8234f384351ba"),
+        count: await web3.eth.getTransactionCount(accountId),
         transactions,
     })
 })
