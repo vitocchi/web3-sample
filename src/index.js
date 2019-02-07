@@ -46,10 +46,7 @@ app.get('/:accountId/transactions', async (req, res) => {
             }
         })
     }
-    res.json({
-        count: await web3.eth.getTransactionCount(accountId),
-        transactions,
-    })
+    res.json(transactions)
 })
 
 app.listen(3001, () => {
